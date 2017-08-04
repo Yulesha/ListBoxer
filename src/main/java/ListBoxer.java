@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 public class ListBoxer extends JFrame {
     String oldText;
     ArrayList<String> recordsList = new ArrayList<>();
+    String copiedText;
 
     JPanel pnlInput, pnlSymbols, pnlSort, pnlText;
     private JButton buttonAdd = new JButton("Add to List");
@@ -75,6 +76,30 @@ public class ListBoxer extends JFrame {
         jmEdit.add(jmiCut);
         jmEdit.add(jmiPaste);
         JMenu jmHelp = new JMenu("Help");
+
+        final JPopupMenu menu = new JPopupMenu();
+        JMenuItem jpiCopy = new JMenuItem("Copy");
+        menu.add(jpiCopy);
+        JMenuItem jpiCut = new JMenuItem("Cut");
+        menu.add(jpiCut);
+        JMenuItem jpiPaste = new JMenuItem("Paste");
+        menu.add(jpiPaste);
+        input.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+
+            public void mouseReleased(MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+        });
+        jpiCopy.addActionListener(new ClickCopy());
+        jpiCut.addActionListener(new ClickCut());
+        jpiPaste.addActionListener(new ClickPaste());
 
         jmb.add(jmFile);
         jmb.add(jmEdit);
@@ -212,6 +237,26 @@ public class ListBoxer extends JFrame {
     public class ClearButtonClick implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             text.setText(null);
+        }
+    }
+
+    public class ClickCopy implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+             copiedText = input.getSelectedText();
+        }
+    }
+
+    public class ClickCut implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            copiedText = input.getSelectedText();
+            input.setText(input.getText().substring(0, input.getSelectionStart()));
+        }
+    }
+
+    public class ClickPaste implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            input.setText(copiedText);
+
         }
     }
 
@@ -531,6 +576,8 @@ public class ListBoxer extends JFrame {
             text.setText(newText.toString());
             recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
         }
+
+
 
     }
 

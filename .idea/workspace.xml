@@ -16,9 +16,12 @@
       <file leaf-file-name="ListBoxer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/ListBoxer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="151">
-              <caret line="139" column="30" lean-forward="true" selection-start-line="139" selection-start-column="30" selection-end-line="139" selection-end-column="30" />
-              <folding />
+            <state relative-caret-position="367">
+              <caret line="261" column="0" lean-forward="true" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
+              <folding>
+                <element signature="e#9395#9396#0" expanded="true" />
+                <element signature="e#9456#9457#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -539,7 +542,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
           <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#9395#9396#0" expanded="true" />
+            <element signature="e#9456#9457#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -573,7 +579,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#9395#9396#0" expanded="true" />
+            <element signature="e#9456#9457#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -607,7 +616,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#9395#9396#0" expanded="true" />
+            <element signature="e#9456#9457#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -633,7 +645,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2988">
           <caret line="173" column="40" lean-forward="false" selection-start-line="173" selection-start-column="40" selection-end-line="173" selection-end-column="40" />
-          <folding />
+          <folding>
+            <element signature="e#9395#9396#0" expanded="true" />
+            <element signature="e#9456#9457#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -692,9 +707,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/ListBoxer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="151">
-          <caret line="139" column="30" lean-forward="true" selection-start-line="139" selection-start-column="30" selection-end-line="139" selection-end-column="30" />
-          <folding />
+        <state relative-caret-position="367">
+          <caret line="261" column="0" lean-forward="true" selection-start-line="261" selection-start-column="0" selection-end-line="261" selection-end-column="0" />
+          <folding>
+            <element signature="e#9395#9396#0" expanded="true" />
+            <element signature="e#9456#9457#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
