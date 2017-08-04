@@ -62,11 +62,15 @@ public class ListBoxer extends JFrame {
         jmiUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_MASK));
         JMenuItem jmiCopy = new JMenuItem("Copy");
         jmiCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK));
+        jmiCopy.setEnabled(false);
         JMenuItem jmiCut = new JMenuItem("Cut");
         jmiCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK));
+        jmiCut.setEnabled(false);
         JMenuItem jmiPaste = new JMenuItem("Paste");
         jmiPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK));
+        jmiPaste.setEnabled(false);
         jmEdit.add(jmiUndo);
+        jmEdit.addSeparator();
         jmEdit.add(jmiCopy);
         jmEdit.add(jmiCut);
         jmEdit.add(jmiPaste);
@@ -84,6 +88,75 @@ public class ListBoxer extends JFrame {
         pnlInput.add(labelRange);
         pnlInput.add(rangeList);
         input.setColumns(10);
+        input.addKeyListener(new KeyAdapter() {
+            boolean ctrlPressed = false;
+            boolean cPressed = false;
+            boolean xPressed = false;
+            boolean vPressed = false;
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                switch(e.getKeyCode()) {
+                    case KeyEvent.VK_C:
+                        cPressed=true;
+                        break;
+                    case KeyEvent.VK_V:
+                        vPressed=true;
+                        break;
+                    case KeyEvent.VK_X:
+                        xPressed=true;
+                        break;
+                    case KeyEvent.VK_CONTROL:
+                        ctrlPressed=true;
+                        break;
+
+                }
+
+                if(ctrlPressed && cPressed) {
+                    System.out.println("Blocked CTRl+C");
+                    e.consume();// Stop the event from propagating.
+                }
+                if(ctrlPressed && vPressed) {
+                    System.out.println("Blocked CTRl+V");
+                    e.consume();// Stop the event from propagating.
+                }
+                if(ctrlPressed && xPressed) {
+                    System.out.println("Blocked CTRl+X");
+                    e.consume();// Stop the event from propagating.
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                switch(e.getKeyCode()) {
+                    case KeyEvent.VK_C:
+                        cPressed=false;
+                        break;
+                    case KeyEvent.VK_X:
+                        xPressed=false;
+                        break;
+                    case KeyEvent.VK_V:
+                        vPressed=false;
+                        break;
+                    case KeyEvent.VK_CONTROL:
+                        ctrlPressed=false;
+                        break;
+                }
+
+                if(ctrlPressed && cPressed) {
+                    System.out.println("Blocked CTRl+C");
+                    e.consume();// Stop the event from propagating.
+                }
+                if(ctrlPressed && vPressed) {
+                    System.out.println("Blocked CTRl+V");
+                    e.consume();// Stop the event from propagating.
+                }
+                if(ctrlPressed && xPressed) {
+                    System.out.println("Blocked CTRl+X");
+                    e.consume();// Stop the event from propagating.
+                }
+            }
+        });
         pnlInput.add(input);
         pnlInput.add(buttonAdd);
         pnlInput.add(buttonClear);
