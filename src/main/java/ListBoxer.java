@@ -40,7 +40,7 @@ public class ListBoxer extends JFrame {
 
     public ListBoxer() {
         super("ListBoxer");
-        this.setSize(500, 230);
+        this.setSize(500, 280);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JMenuBar jmb = new JMenuBar();
@@ -76,24 +76,48 @@ public class ListBoxer extends JFrame {
         jmEdit.add(jmiCut);
         jmEdit.add(jmiPaste);
         JMenu jmHelp = new JMenu("Help");
+        JMenuItem jmiAbout = new JMenuItem("About");
+        jmHelp.add(jmiAbout);
+        jmiAbout.addActionListener(new AboutButton());
 
         final JPopupMenu menu = new JPopupMenu();
         JMenuItem jpiCopy = new JMenuItem("Copy");
+        //jpiCopy.setEnabled(false);
         menu.add(jpiCopy);
         JMenuItem jpiCut = new JMenuItem("Cut");
+        //jpiCopy.setEnabled(false);
         menu.add(jpiCut);
         JMenuItem jpiPaste = new JMenuItem("Paste");
         menu.add(jpiPaste);
         input.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent evt) {
+                if (input.getSelectedText()!=null){
+                    jpiCopy.setEnabled(true);
+                    jpiCut.setEnabled(true);
+                }
+                else{
+                    jpiCopy.setEnabled(false);
+                    jpiCut.setEnabled(false);
+                }
                 if (evt.isPopupTrigger()) {
+
                     menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                    System.out.println(input.getSelectedText());
+
                 }
             }
 
             public void mouseReleased(MouseEvent evt) {
+                if (input.getSelectedText()!=null){
+                    jpiCopy.setEnabled(true);
+                    jpiCut.setEnabled(true);
+                }
+                else{
+                    jpiCopy.setEnabled(false);
+                    jpiCut.setEnabled(false);
+                }
                 if (evt.isPopupTrigger()) {
-                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                   menu.show(evt.getComponent(), evt.getX(), evt.getY());
                 }
             }
         });
@@ -134,7 +158,12 @@ public class ListBoxer extends JFrame {
                     case KeyEvent.VK_CONTROL:
                         ctrlPressed=true;
                         break;
-
+                    case KeyEvent.VK_ENTER:
+                        recordsList.add(input.getText());
+                        recordsTotalCount.setText(String.valueOf(recordsList.size()));
+                        recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+                        input.setText("");
+                        break;
                 }
 
                 if(ctrlPressed && cPressed) {
@@ -237,6 +266,17 @@ public class ListBoxer extends JFrame {
     public class ClearButtonClick implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             text.setText(null);
+            recordsList = new ArrayList<String>();
+            recordsTotalCount.setText(String.valueOf(recordsList.size()));
+            recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+        }
+    }
+
+    public class AboutButton implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            //About about = new About();
+           // about.setVisible(true);
+            JOptionPane.showMessageDialog(null, "ListBoxer v.2 - program for testing\ncreated by Vergun Yulia" );
         }
     }
 
