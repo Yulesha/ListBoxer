@@ -274,9 +274,7 @@ public class ListBoxer extends JFrame {
 
     public class AboutButton implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            //About about = new About();
-           // about.setVisible(true);
-            JOptionPane.showMessageDialog(null, "ListBoxer v.2 - program for testing\ncreated by Vergun Yulia" );
+           JOptionPane.showMessageDialog(null, "ListBoxer v.2 - program for testing" );
         }
     }
 
