@@ -81,10 +81,10 @@ public class ListBoxer extends JFrame {
         jmiAbout.addActionListener(new AboutButton());
 
         final JPopupMenu menu = new JPopupMenu();
-        JMenuItem jpiCopy = new JMenuItem("Copy");
+        final JMenuItem jpiCopy = new JMenuItem("Copy");
         //jpiCopy.setEnabled(false);
         menu.add(jpiCopy);
-        JMenuItem jpiCut = new JMenuItem("Cut");
+        final JMenuItem jpiCut = new JMenuItem("Cut");
         //jpiCopy.setEnabled(false);
         menu.add(jpiCut);
         JMenuItem jpiPaste = new JMenuItem("Paste");
@@ -159,10 +159,7 @@ public class ListBoxer extends JFrame {
                         ctrlPressed=true;
                         break;
                     case KeyEvent.VK_ENTER:
-                        recordsList.add(input.getText());
-                        recordsTotalCount.setText(String.valueOf(recordsList.size()));
-                        recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
-                        input.setText("");
+                        checkInputValue();
                         break;
                 }
 
@@ -300,19 +297,23 @@ public class ListBoxer extends JFrame {
 
     public class AddButtonClick implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            if (!input.getText().equals("")) {
-                try {
-                    Integer x = Integer.parseInt(input.getText());
-                    if (x<=10000) addText();
-                    else {
-                        JOptionPane.showMessageDialog(null, "Value is wrong" );
-                    }
-                }
-                catch (Exception ex){
-                    addText();
-                }
+           checkInputValue();
+        }
+    }
 
+    private void checkInputValue(){
+        if (!input.getText().equals("")) {
+            try {
+                Integer x = Integer.parseInt(input.getText());
+                if (x<=10000) addText();
+                else {
+                    JOptionPane.showMessageDialog(null, "Value is wrong" );
+                }
             }
+            catch (Exception ex){
+                addText();
+            }
+
         }
     }
 
@@ -321,7 +322,8 @@ public class ListBoxer extends JFrame {
         recordsList.add(input.getText());
         input.setText("");
         recordsTotalCount.setText(String.valueOf(recordsList.size()));
-        recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+        //recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+        checkRange(rangeList.getSelectedItem().toString());
     }
 
     public class SaveButton implements ActionListener {
@@ -372,9 +374,12 @@ public class ListBoxer extends JFrame {
 
                     String sCurrentLine;
                     br.readLine();
+                    text.setText("");
+                    recordsList = new ArrayList<String>();
 
                     while ((sCurrentLine = br.readLine()) != null) {
                         text.append(sCurrentLine + "\n");
+                        recordsList.add(sCurrentLine);
                     }
 
                 } catch (Exception ex) {
@@ -400,6 +405,8 @@ public class ListBoxer extends JFrame {
                 }
 
             }
+            recordsCountInList.setText(String.valueOf(text.getLineCount()-1));
+            recordsTotalCount.setText(String.valueOf(recordsList.size()));
         }
     }
 
@@ -551,42 +558,47 @@ public class ListBoxer extends JFrame {
         public class ChangeRange implements ItemListener {
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    Object item = e.getItem();
-                    if (item.toString().equals("<none>")) {
-                        text.setText("");
-                        recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
-                    }
-                    if (item.toString().equals("All")) {
-                        StringBuilder newText = new StringBuilder();
-                        for (String x : recordsList) {
-                            newText.append(x).append("\n");
-                        }
-                        text.setText(newText.toString());
-                        recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
-                    }
-                    if (item.toString().equals("0-100")) {
-                        applyRangeNum(0, 100);
-                    }
-                    if (item.toString().equals("101-200")) {
-                        applyRangeNum(101, 200);
-                    }
-                    if (item.toString().equals("201-300")) {
-                        applyRangeNum(201, 300);
-                    }
-                    if (item.toString().equals("301-9999")) {
-                        applyRangeNum(301, 9999);
-                    }
-                    if (item.toString().equals("a-m")) {
-                        Pattern p = Pattern.compile("^[a-mA-M]");
-                        applyRangeAlpha(p);
-                    }
-                    if (item.toString().equals("n-z")) {
-                        Pattern p = Pattern.compile("^[n-zN-Z]");
-                        applyRangeAlpha(p);
-                    }
+                   String strItem = e.getItem().toString();
+                   checkRange(strItem);
+
                 }
             }
 
+        }
+
+        private void checkRange(String item){
+            if (item.equals("<none>")) {
+                text.setText("");
+                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+            }
+            if (item.equals("All")) {
+                StringBuilder newText = new StringBuilder();
+                for (String x : recordsList) {
+                    newText.append(x).append("\n");
+                }
+                text.setText(newText.toString());
+                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+            }
+            if (item.equals("0-100")) {
+                applyRangeNum(0, 100);
+            }
+            if (item.equals("101-200")) {
+                applyRangeNum(101, 200);
+            }
+            if (item.equals("201-300")) {
+                applyRangeNum(201, 300);
+            }
+            if (item.equals("301-9999")) {
+                applyRangeNum(301, 9999);
+            }
+            if (item.equals("a-m")) {
+                Pattern p = Pattern.compile("^[a-mA-M]");
+                applyRangeAlpha(p);
+            }
+            if (item.equals("n-z")) {
+                Pattern p = Pattern.compile("^[n-zN-Z]");
+                applyRangeAlpha(p);
+            }
         }
 
         private void applyRangeNum(int min, int max) {
