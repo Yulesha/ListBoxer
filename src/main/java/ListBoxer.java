@@ -3,6 +3,7 @@ import javax.swing.border.Border;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -15,22 +16,12 @@ import java.util.regex.Pattern;
  * Created by user on 27.07.17.
  */
 public class ListBoxer extends JFrame {
-    String oldText;
-    ArrayList<String> recordsList = new ArrayList<>();
-    String copiedText;
+    private ArrayList<String> recordsList = new ArrayList<>();
 
-    JPanel pnlInput, pnlSymbols, pnlSort, pnlText;
-    private JButton buttonAdd = new JButton("Add to List");
-    private JButton buttonClear = new JButton("Clear List");
     private TextLengthLimitTextField input = new TextLengthLimitTextField("");
     private JTextArea text = new JTextArea(9, 30);
-    private JLabel recordsTotal = new JLabel("Records total count: ");
-    private JLabel recordsInList = new JLabel("Records count in list: ");
     private JLabel recordsTotalCount = new JLabel("0");
     private JLabel recordsCountInList = new JLabel("0");
-    private JLabel labelRange = new JLabel("Range:");
-    private JRadioButton radioDesc = new JRadioButton("Descending");
-    private JRadioButton radioAsc = new JRadioButton("Ascending");
     private JCheckBox checkAlpha = new JCheckBox("Alphabetic", false);
     private JCheckBox checkNum = new JCheckBox("Numeric", false);
     private String[] rangeValuesAlpha = {"All", "<none>", "a-m", "n-z"};
@@ -94,10 +85,12 @@ public class ListBoxer extends JFrame {
                 if (input.getSelectedText()!=null){
                     jpiCopy.setEnabled(true);
                     jpiCut.setEnabled(true);
+
                 }
                 else{
                     jpiCopy.setEnabled(false);
                     jpiCut.setEnabled(false);
+
                 }
                 if (evt.isPopupTrigger()) {
 
@@ -132,8 +125,9 @@ public class ListBoxer extends JFrame {
         this.setJMenuBar(jmb);
         this.setVisible(true);
 
-        pnlInput = new JPanel();
+        JPanel pnlInput = new JPanel();
         pnlInput.setLayout(new FlowLayout());
+        JLabel labelRange = new JLabel("Range:");
         pnlInput.add(labelRange);
         pnlInput.add(rangeList);
         input.setColumns(10);
@@ -163,6 +157,10 @@ public class ListBoxer extends JFrame {
                         break;
                 }
 
+                blockPress(e);
+            }
+
+            private void blockPress(KeyEvent e){
                 if(ctrlPressed && cPressed) {
                     System.out.println("Blocked CTRl+C");
                     e.consume();// Stop the event from propagating.
@@ -194,22 +192,13 @@ public class ListBoxer extends JFrame {
                         break;
                 }
 
-                if(ctrlPressed && cPressed) {
-                    System.out.println("Blocked CTRl+C");
-                    e.consume();// Stop the event from propagating.
-                }
-                if(ctrlPressed && vPressed) {
-                    System.out.println("Blocked CTRl+V");
-                    e.consume();// Stop the event from propagating.
-                }
-                if(ctrlPressed && xPressed) {
-                    System.out.println("Blocked CTRl+X");
-                    e.consume();// Stop the event from propagating.
-                }
+                blockPress(e);
             }
         });
         pnlInput.add(input);
+        JButton buttonAdd = new JButton("Add to List");
         pnlInput.add(buttonAdd);
+        JButton buttonClear = new JButton("Clear List");
         pnlInput.add(buttonClear);
         this.add(pnlInput, BorderLayout.NORTH);
         buttonClear.addActionListener(new ClearButtonClick());
@@ -220,11 +209,13 @@ public class ListBoxer extends JFrame {
         JPanel pnlSelect = new JPanel();
         pnlSelect.setLayout(new GridLayout(2, 1));
 
-        pnlSort = new JPanel();
+        JPanel pnlSort = new JPanel();
         pnlSort.setBorder(BorderFactory.createTitledBorder("Sort"));
         pnlSort.setLayout(new GridLayout(2, 1));
         ButtonGroup group = new ButtonGroup();
+        JRadioButton radioDesc = new JRadioButton("Descending");
         group.add(radioDesc);
+        JRadioButton radioAsc = new JRadioButton("Ascending");
         group.add(radioAsc);
         pnlSort.add(radioDesc);
         pnlSort.add(radioAsc);
@@ -232,7 +223,7 @@ public class ListBoxer extends JFrame {
         radioDesc.addItemListener(new SelectDesc());
         radioAsc.addItemListener(new SelectAsc());
 
-        pnlSymbols = new JPanel();
+        JPanel pnlSymbols = new JPanel();
         pnlSymbols.setBorder(BorderFactory.createTitledBorder("Symbols"));
         pnlSymbols.setLayout(new GridLayout(2, 1));
         checkAlpha.setSelected(true);
@@ -248,11 +239,13 @@ public class ListBoxer extends JFrame {
         this.add(pnlSelect, BorderLayout.WEST);
 
 
-        pnlText = new JPanel();
+        JPanel pnlText = new JPanel();
         text.setEnabled(false);
         pnlText.add(text);
+        JLabel recordsTotal = new JLabel("Records total count: ");
         pnlText.add(recordsTotal);
         pnlText.add(recordsTotalCount);
+        JLabel recordsInList = new JLabel("Records count in list: ");
         pnlText.add(recordsInList);
         pnlText.add(recordsCountInList);
         this.add(pnlText);
@@ -277,21 +270,27 @@ public class ListBoxer extends JFrame {
 
     public class ClickCopy implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-             copiedText = input.getSelectedText();
-        }
+            TextTransfer copiedText = new TextTransfer();
+            copiedText.setData(input.getSelectedText());
+           }
     }
 
     public class ClickCut implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            copiedText = input.getSelectedText();
+            TextTransfer cutText = new TextTransfer();
+            cutText.setData(input.getSelectedText());
             input.setText(input.getText().substring(0, input.getSelectionStart()));
         }
     }
 
     public class ClickPaste implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            input.setText(copiedText);
-
+            TextTransfer pastedText = new TextTransfer();
+            try {
+                input.setText(pastedText.getData());
+            } catch (IOException | UnsupportedFlavorException e1) {
+                e1.printStackTrace();
+            }
         }
     }
 
@@ -303,18 +302,17 @@ public class ListBoxer extends JFrame {
 
     private void checkInputValue(){
         if (!input.getText().equals("")) {
-            try {
-                Integer x = Integer.parseInt(input.getText());
-                if (x<=10000) addText();
-                else {
-                    JOptionPane.showMessageDialog(null, "Value is wrong" );
-                }
-            }
-            catch (Exception ex){
-                addText();
-            }
+            if (!checkAlpha.isSelected()) {
+                    Integer x = Integer.parseInt(input.getText());
+                    if (x <= 10000) addText();
+                    else {
+                        JOptionPane.showMessageDialog(null, "Value is wrong");
 
-        }
+                    }
+               }
+            else  addText();
+
+            }
     }
 
     private void addText(){
@@ -328,12 +326,14 @@ public class ListBoxer extends JFrame {
 
     public class SaveButton implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("List Boxer files (*.lbx)", "lbx");
-            fileChooser.setFileFilter(filter);
+            JFileChooser fileChooser = createFileChooser();
             if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
+                String path = fileChooser.getSelectedFile().getAbsolutePath();
+                if (!path.substring(path.length() - 4, path.length()).equalsIgnoreCase(
+                        ".lbx")) {
+                    path += ".lbx";
+                }
+                File file = new File(path);
                 // save to file
                 StringBuilder builder = new StringBuilder();
                 for (String x : recordsList) {
@@ -355,12 +355,19 @@ public class ListBoxer extends JFrame {
         }
     }
 
+
+    private JFileChooser createFileChooser(){
+        JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("List Boxer files (*.lbx)", "lbx");
+        fileChooser.setFileFilter(filter);
+        fileChooser.addChoosableFileFilter(filter);
+        return fileChooser;
+    }
+
     public class OpenButton implements ActionListener {
         public void actionPerformed(ActionEvent e) {
-            JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
-            fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("List Boxer files (*.lbx)", "lbx");
-            fileChooser.setFileFilter(filter);
+            JFileChooser fileChooser = createFileChooser();
             if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
                 // open from file
@@ -417,49 +424,25 @@ public class ListBoxer extends JFrame {
                 input.setTextLengthLimit(8);
                 input.setSymbols("alpha");
                 rangeList.setModel(new DefaultComboBoxModel(rangeValuesAlpha));
-                StringBuilder newText = new StringBuilder();
-                for (String x : recordsList) {
-                    try {
-                        Integer.parseInt(x);
-                    } catch (Exception ex) {
-                        newText.append(x).append("\n");
-                    }
-                }
-                text.setText(newText.toString());
-                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+                rangeList.setEnabled(true);
+
             }
             if (!checkAlpha.isSelected() && checkNum.isSelected()) {
-                //input.setTextLengthLimit(4);
                 input.setSymbols("num");
                 rangeList.setModel(new DefaultComboBoxModel(rangeValuesNum));
-                StringBuilder newText = new StringBuilder();
-                for (String x : recordsList) {
-                    try {
-                        Integer.parseInt(x);
-                        newText.append(x).append("\n");
-                    } catch (Exception ex) {
-
-                    }
+                rangeList.setEnabled(true);
                 }
-                text.setText(newText.toString());
-                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
-            }
             if (!checkAlpha.isSelected() && !checkNum.isSelected()) {
                 input.setEnabled(false);
-                input.setText("");
-                text.setText("");
+                //text.setText("");
+                rangeList.setEnabled(false);
             }
             if (checkAlpha.isSelected() && checkNum.isSelected()) {
                 input.setTextLengthLimit(8);
                 input.setSymbols("all");
                 rangeList.setModel(new DefaultComboBoxModel(rangeValuesAll));
-                StringBuilder newText = new StringBuilder();
-                for (String x : recordsList) {
-                    newText.append(x).append("\n");
-                }
-                text.setText(newText.toString());
-                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
-            }
+                rangeList.setEnabled(true);
+               }
 
         }
     }
@@ -468,51 +451,29 @@ public class ListBoxer extends JFrame {
         public void itemStateChanged(ItemEvent e) {
             input.setEnabled(true);
             if (checkNum.isSelected() && !checkAlpha.isSelected()) {
-                //input.setTextLengthLimit(4);
                 input.setSymbols("num");
                 rangeList.setModel(new DefaultComboBoxModel(rangeValuesNum));
-                StringBuilder newText = new StringBuilder();
-                for (String x : recordsList) {
-                    try {
-                        Integer.parseInt(x);
-                        newText.append(x).append("\n");
-                    } catch (Exception ex) {
+                rangeList.setEnabled(true);
 
-                    }
-                }
-                text.setText(newText.toString());
-                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
             }
             if (!checkNum.isSelected() && checkAlpha.isSelected()) {
                 input.setTextLengthLimit(8);
                 input.setSymbols("alpha");
                 rangeList.setModel(new DefaultComboBoxModel(rangeValuesAlpha));
-                StringBuilder newText = new StringBuilder();
-                for (String x : recordsList) {
-                    try {
-                        Integer.parseInt(x);
-                    } catch (Exception ex) {
-                        newText.append(x).append("\n");
-                    }
-                }
-                text.setText(newText.toString());
-                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+                rangeList.setEnabled(true);
+
             }
                 if (!checkAlpha.isSelected() && !checkNum.isSelected()) {
                     input.setEnabled(false);
-                    input.setText("");
-                    text.setText("");
+                    //text.setText("");
+                    rangeList.setEnabled(false);
                 }
                 if (checkAlpha.isSelected() && checkNum.isSelected()) {
                     input.setTextLengthLimit(8);
                     input.setSymbols("all");
                     rangeList.setModel(new DefaultComboBoxModel(rangeValuesAll));
-                    StringBuilder newText = new StringBuilder();
-                    for (String x : recordsList) {
-                        newText.append(x).append("\n");
-                    }
-                    text.setText(newText.toString());
-                    recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+                    rangeList.setEnabled(true);
+
                 }
 
             }
@@ -522,35 +483,39 @@ public class ListBoxer extends JFrame {
 
         public class SelectDesc implements ItemListener {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    String curList = text.getText();
-                    String[] curListArray = curList.split("\n");
-                    Arrays.sort(curListArray, Collections.reverseOrder());
-                    String temp = curListArray[curListArray.length-1];
-                    curListArray[curListArray.length-1] = curListArray[curListArray.length-2];
-                    curListArray[curListArray.length-2] = temp;
-                    StringBuilder sortedText = new StringBuilder();
-                    for (String x : curListArray) {
-                        sortedText.append(x).append("\n");
-                    }
-                    text.setText(sortedText.toString());
+                if (e.getStateChange() != ItemEvent.SELECTED) {
+                    return;
                 }
+                String curList = text.getText();
+                String[] curListArray = curList.split("\n");
+                Arrays.sort(curListArray, Collections.reverseOrder());
+                String temp = curListArray[curListArray.length-1];
+                curListArray[curListArray.length-1] = curListArray[curListArray.length-2];
+                curListArray[curListArray.length-2] = temp;
+                StringBuilder sortedText = new StringBuilder();
+                for (String x : curListArray) {
+                    sortedText.append(x).append("\n");
+                }
+                text.setText(sortedText.toString());
+
             }
 
         }
 
         public class SelectAsc implements ItemListener {
             public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    String curList = text.getText();
-                    String[] curListArray = curList.split("\n");
-                    Arrays.sort(curListArray);
-                    StringBuilder sortedText = new StringBuilder();
-                    for (String x : curListArray) {
-                        sortedText.append(x).append("\n");
-                    }
-                    text.setText(sortedText.toString());
+                if (e.getStateChange() != ItemEvent.SELECTED) {
+                    return;
                 }
+                String curList = text.getText();
+                String[] curListArray = curList.split("\n");
+                Arrays.sort(curListArray);
+                StringBuilder sortedText = new StringBuilder();
+                for (String x : curListArray) {
+                    sortedText.append(x).append("\n");
+                }
+                text.setText(sortedText.toString());
+
             }
 
         }
@@ -581,19 +546,24 @@ public class ListBoxer extends JFrame {
             }
             if (item.equals("0-100")) {
                 applyRangeNum(0, 100);
+                return;
             }
             if (item.equals("101-200")) {
                 applyRangeNum(101, 200);
+                return;
             }
             if (item.equals("201-300")) {
                 applyRangeNum(201, 300);
+                return;
             }
             if (item.equals("301-9999")) {
                 applyRangeNum(301, 9999);
+                return;
             }
             if (item.equals("a-m")) {
                 Pattern p = Pattern.compile("^[a-mA-M]");
                 applyRangeAlpha(p);
+                return;
             }
             if (item.equals("n-z")) {
                 Pattern p = Pattern.compile("^[n-zN-Z]");

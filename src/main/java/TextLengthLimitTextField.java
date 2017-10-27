@@ -39,10 +39,10 @@ public class TextLengthLimitTextField extends JTextField
             acceptedChars   = "0123456789";
         }
         if (symbols.equals("alpha")){
-            acceptedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ";
+            acceptedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         }
         if (symbols.equals("all")){
-            acceptedChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVQXYZ";
+            acceptedChars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         }
     }
 
@@ -63,7 +63,7 @@ public class TextLengthLimitTextField extends JTextField
                 if (curLength >= textLengthLimit) return;
                 int insertLength = insertStr.length();
                 if ((curLength + insertLength) > textLengthLimit)
-                    insertStr = insertStr.substring(0, (textLengthLimit - curLength - 1));
+                    insertStr = insertStr.substring(0, (textLengthLimit - curLength));
             }
             for (int i=0; i < str.length(); i++) {
                 if (!acceptedChars.contains(String.valueOf(str.charAt(i))))
