@@ -28,6 +28,9 @@ public class ListBoxer extends JFrame {
     private String[] rangeValuesNum = {"All", "<none>", "0-100", "101-200", "201-300", "301-9999"};
     private String[] rangeValuesAll = {"All", "<none>", "0-100", "101-200", "201-300", "301-9999", "a-m", "n-z"};
     private JComboBox rangeList = new JComboBox(rangeValuesAlpha);
+    private JRadioButton radioDesc = new JRadioButton("Descending");
+    private JRadioButton radioAsc = new JRadioButton("Ascending");
+
 
     public ListBoxer() {
         super("ListBoxer");
@@ -80,6 +83,7 @@ public class ListBoxer extends JFrame {
         menu.add(jpiCut);
         JMenuItem jpiPaste = new JMenuItem("Paste");
         menu.add(jpiPaste);
+        input.setComponentPopupMenu(menu);
         input.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent evt) {
                 if (input.getSelectedText()!=null){
@@ -213,9 +217,7 @@ public class ListBoxer extends JFrame {
         pnlSort.setBorder(BorderFactory.createTitledBorder("Sort"));
         pnlSort.setLayout(new GridLayout(2, 1));
         ButtonGroup group = new ButtonGroup();
-        JRadioButton radioDesc = new JRadioButton("Descending");
         group.add(radioDesc);
-        JRadioButton radioAsc = new JRadioButton("Ascending");
         group.add(radioAsc);
         pnlSort.add(radioDesc);
         pnlSort.add(radioAsc);
@@ -313,6 +315,33 @@ public class ListBoxer extends JFrame {
             else  addText();
 
             }
+            if (radioDesc.isSelected())  sortDesc();
+            if (radioAsc.isSelected())  sortAsc();
+    }
+
+    private void sortDesc(){
+        String curList = text.getText();
+        String[] curListArray = curList.split("\n");
+        Arrays.sort(curListArray, Collections.reverseOrder());
+        String temp = curListArray[curListArray.length-1];
+        curListArray[curListArray.length-1] = curListArray[curListArray.length-2];
+        curListArray[curListArray.length-2] = temp;
+        StringBuilder sortedText = new StringBuilder();
+        for (String x : curListArray) {
+            sortedText.append(x).append("\n");
+        }
+        text.setText(sortedText.toString());
+    }
+
+    private void sortAsc(){
+        String curList = text.getText();
+        String[] curListArray = curList.split("\n");
+        Arrays.sort(curListArray);
+        StringBuilder sortedText = new StringBuilder();
+        for (String x : curListArray) {
+            sortedText.append(x).append("\n");
+        }
+        text.setText(sortedText.toString());
     }
 
     private void addText(){
@@ -443,8 +472,17 @@ public class ListBoxer extends JFrame {
                 rangeList.setModel(new DefaultComboBoxModel(rangeValuesAll));
                 rangeList.setEnabled(true);
                }
-
+            displayAllItems();
         }
+    }
+
+    private void displayAllItems(){
+        StringBuilder newText = new StringBuilder();
+        for (String x : recordsList) {
+            newText.append(x).append("\n");
+        }
+        text.setText(newText.toString());
+        recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
     }
 
     public class SelectNum implements ItemListener {
@@ -475,8 +513,10 @@ public class ListBoxer extends JFrame {
                     rangeList.setEnabled(true);
 
                 }
+            displayAllItems();
 
             }
+
 
         }
 
@@ -486,18 +526,7 @@ public class ListBoxer extends JFrame {
                 if (e.getStateChange() != ItemEvent.SELECTED) {
                     return;
                 }
-                String curList = text.getText();
-                String[] curListArray = curList.split("\n");
-                Arrays.sort(curListArray, Collections.reverseOrder());
-                String temp = curListArray[curListArray.length-1];
-                curListArray[curListArray.length-1] = curListArray[curListArray.length-2];
-                curListArray[curListArray.length-2] = temp;
-                StringBuilder sortedText = new StringBuilder();
-                for (String x : curListArray) {
-                    sortedText.append(x).append("\n");
-                }
-                text.setText(sortedText.toString());
-
+                sortDesc();
             }
 
         }
@@ -507,14 +536,7 @@ public class ListBoxer extends JFrame {
                 if (e.getStateChange() != ItemEvent.SELECTED) {
                     return;
                 }
-                String curList = text.getText();
-                String[] curListArray = curList.split("\n");
-                Arrays.sort(curListArray);
-                StringBuilder sortedText = new StringBuilder();
-                for (String x : curListArray) {
-                    sortedText.append(x).append("\n");
-                }
-                text.setText(sortedText.toString());
+                sortAsc();
 
             }
 
@@ -537,12 +559,7 @@ public class ListBoxer extends JFrame {
                 recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
             }
             if (item.equals("All")) {
-                StringBuilder newText = new StringBuilder();
-                for (String x : recordsList) {
-                    newText.append(x).append("\n");
-                }
-                text.setText(newText.toString());
-                recordsCountInList.setText(String.valueOf(text.getLineCount() - 1));
+                displayAllItems();
             }
             if (item.equals("0-100")) {
                 applyRangeNum(0, 100);
